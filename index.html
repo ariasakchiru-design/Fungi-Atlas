@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Fungi Atlas</title>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,600;1,400;1,600&family=Hanken+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#e4e8de;--panel:#f3f5ef;--ink:#1d221d;--mute:#5d6659;--line:#c7cfbf;--acc:#4a2f5c;--accink:#fff;--white:#f4f1e6;--brown:#7b4a28;--soft:#34454d;
+--serif:'Newsreader',Georgia,serif;--sans:'Hanken Grotesk',system-ui,sans-serif;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#171b17;--panel:#202620;--ink:#e6eadf;--mute:#9aa595;--line:#343c33;--acc:#c9a6e0;--accink:#1d1424;--white:#d9d5c2}}
+:root[data-theme="dark"]{--bg:#171b17;--panel:#202620;--ink:#e6eadf;--mute:#9aa595;--line:#343c33;--acc:#c9a6e0;--accink:#1d1424;--white:#d9d5c2}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 var(--sans)}
+header{padding:28px 20px 16px;max-width:1200px;margin:auto;display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end;justify-content:space-between}
+h1{font:600 clamp(2rem,5vw,3rem)/1 var(--serif);margin:0;letter-spacing:-.02em}
+.sub{color:var(--mute);margin:6px 0 0}
+.bar{display:flex;gap:8px;flex-wrap:wrap}
+button,input,select,textarea{font:inherit;color:inherit}
+.btn{border:1px solid var(--line);background:var(--panel);padding:8px 14px;border-radius:6px;cursor:pointer;font-weight:500}
+.btn.pri{background:var(--acc);color:var(--accink);border-color:var(--acc)}
+.btn.del{color:#b3261e;border-color:#b3261e55}
+.btn:focus-visible,.chip:focus-visible,.card:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+main{max-width:1200px;margin:auto;padding:0 20px 60px}
+#q{width:100%;padding:11px 14px;border:1px solid var(--line);border-radius:6px;background:var(--panel);margin-bottom:14px}
+.filters{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 16px}
+.grp{padding:10px 0;border-bottom:1px solid var(--line)}.grp:last-child{border:0}
+.grp h3{font:600 .85rem var(--sans);margin:0 0 7px;color:var(--mute)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:transparent;border-radius:99px;padding:3px 11px;cursor:pointer;font-size:.85rem}
+.chip[aria-pressed=true]{background:var(--acc);color:var(--accink);border-color:var(--acc)}
+.chip small{opacity:.6;margin-left:4px}
+.count{margin:20px 0 12px;display:flex;justify-content:space-between;align-items:center;color:var(--mute)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px}
+.card{background:var(--panel);border:1px solid var(--line);border-left:6px solid var(--c);border-radius:6px;padding:0;overflow:hidden;cursor:pointer;display:flex;flex-direction:column;text-align:left;width:100%}
+.cb{padding:12px 16px 14px;display:flex;flex-direction:column;gap:6px}
+.card:hover{border-color:var(--acc);border-left-color:var(--c)}
+.ph{position:relative;height:160px;background:var(--bg);display:grid;place-items:center;font-size:2.2rem;opacity:1}.ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.more{position:absolute;right:6px;bottom:6px;background:#000a;color:#fff;font-size:.72rem;padding:1px 7px;border-radius:4px}
+.gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;margin-top:8px}.gal div{position:relative}.gal img{width:100%;height:90px;object-fit:cover;border-radius:4px;display:block}.gal button{position:absolute;top:4px;right:4px;border:0;background:#000b;color:#fff;border-radius:4px;cursor:pointer;padding:0 6px}
+.lnks{font-size:.85rem;margin-top:6px;display:flex;flex-direction:column;gap:2px;word-break:break-all}.lnks a{color:var(--acc)}
+.lat{font:italic 600 1.2rem/1.2 var(--serif)}.pl{color:var(--mute);font-size:.9rem}
+.tags{display:flex;flex-wrap:wrap;gap:5px}
+.tag{font-size:.75rem;padding:1px 8px;border-radius:4px;background:var(--bg);border:1px solid var(--line)}
+.tag.rot{background:var(--c);color:#fff;border-color:var(--c)}
+.tag.rot.white{color:#222}
+.tag.ex-Yes{background:var(--acc);color:var(--accink);border-color:var(--acc);font-weight:600}.tag.ex-No{opacity:.6}
+.tag.high{border-color:#b3261e;color:#b3261e}.tag.medium{border-color:#a8740a;color:#a8740a}
+.hosts{font-size:.85rem}
+.empty{grid-column:1/-1;padding:40px;text-align:center;color:var(--mute);border:1px dashed var(--line);border-radius:8px}
+dialog{border:1px solid var(--line);border-radius:10px;background:var(--panel);color:var(--ink);width:min(640px,94vw);max-height:92vh;padding:0}
+dialog::backdrop{background:#0008}
+.dh{display:flex;justify-content:space-between;align-items:center;padding:14px 20px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--panel)}
+.dh h2{font:600 1.4rem var(--serif);margin:0}
+.db{padding:6px 20px 14px}
+.f{margin:12px 0}.f>label,.f>span{display:block;font-weight:600;font-size:.85rem;margin-bottom:5px}
+.f input[type=text],.f textarea{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:6px;background:var(--bg)}
+.f textarea{min-height:70px;resize:vertical}
+.f .hint{font-weight:400;color:var(--mute)}
+.df{display:flex;justify-content:space-between;gap:8px;padding:12px 20px;border-top:1px solid var(--line);position:sticky;bottom:0;background:var(--panel)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:520px){.two{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+  <div><h1>Fungi Atlas</h1><p class="sub" id="sub"></p></div>
+  <div class="bar">
+    <button class="btn" id="exp">Export backup</button>
+    <button class="btn" id="csv">Export CSV</button>
+    <button class="btn" id="imp">Import</button>
+    <button class="btn pri" id="add">+ Add fungus</button>
+    <input type="file" id="file" accept=".json" hidden>
+  </div>
+</header>
+<main>
+  <input id="q" type="search" placeholder="Search Latin, Polish or English name, host, notes…" aria-label="Search">
+  <div class="filters" id="filters"></div>
+  <div class="count"><span id="n"></span><button class="btn" id="clr" hidden>Clear filters</button></div>
+  <div class="grid" id="grid"></div>
+</main>
+
+<dialog id="dlg">
+  <div class="dh"><h2 id="dt">Edit fungus</h2><button class="btn" id="x" aria-label="Close">✕</button></div>
+  <div class="db" id="form"></div>
+  <div class="df"><button class="btn del" id="del">Delete</button><span><button class="btn" id="cancel">Cancel</button> <button class="btn pri" id="save">Save</button></span></div>
+</dialog>
+
+<script>
+const KEY='fungi-atlas-v1';
+const ROT={white:'White rot',brown:'Brown rot',soft:'Soft rot'};
+const RC={white:'var(--white)',brown:'var(--brown)',soft:'var(--soft)'};
+const EX={Yes:'On exam',No:'Not on exam',Unsure:'Not sure'};
+const bi=(o,g)=>g&&g.lab?g.lab(o):o;
+const GROUPS=[
+ {k:'exam',t:'Exam',fixed:['Yes','No','Unsure'],lab:v=>EX[v]},
+ {k:'rot',t:'Type of rot',fixed:['white','brown','soft'],lab:v=>ROT[v]},
+ {k:'part',t:'Where it decays',multi:1,fixed:['Root & butt','Heartwood','Sapwood / limbs','Dead wood']},
+ {k:'hosts',t:'Carrier tree (host)',multi:1},
+ {k:'life',t:'Lifestyle',fixed:['Parasite','Facultative','Saprotroph']},
+ {k:'risk',t:'Failure risk',fixed:['Low','Medium','High']},
+ {k:'form',t:'Fruiting body',fixed:['Hoof / bracket','Shelf','Rosette','Crust','Cap & stem','Cluster']}
+];
+const P=(lat,pl,en,rot,part,hosts,life,risk,form,season,notes)=>({id:'s'+Math.random().toString(36).slice(2,9),lat,pl,en,rot,part,hosts,life,risk,form,season,notes,imgs:[],links:[]});
+const SEED=[
+P('Fomes fomentarius','hubiak pospolity','tinder fungus','white',['Heartwood','Sapwood / limbs'],['Beech','Birch'],'Facultative','High','Hoof / bracket','Perennial','Grey hoof-shaped bracket. Usually means advanced internal decay.'),
+P('Fomitopsis pinicola','pniarek obrzeżony','red-belted conk','brown',['Heartwood','Dead wood'],['Spruce','Beech'],'Facultative','High','Hoof / bracket','Perennial','Red-orange band on margin. Brittle fracture.'),
+P('Ganoderma applanatum','lakownica spłaszczona','artist’s conk','white',['Root & butt'],['Beech','Maple','Lime','Poplar'],'Facultative','High','Hoof / bracket','Perennial','Flat bracket, brown spore dust. Common butt rot on urban trees.'),
+P('Kretzschmaria deusta','próchnilec skorupiasty','brittle cinder','soft',['Root & butt'],['Lime','Beech','Maple','Oak'],'Parasite','High','Crust','Perennial','Black charcoal-like crust at base. Sudden failure in apparently healthy trees.'),
+P('Meripilus giganteus','żagiew olbrzymia','giant polypore','white',['Root & butt'],['Beech','Oak','Lime'],'Parasite','High','Rosette','Summer–autumn','Large rosettes at base. Major cause of beech failure in parks.'),
+P('Laetiporus sulphureus','żółciak siarkowy','chicken of the woods','brown',['Heartwood'],['Oak','Willow','Cherry','Black locust'],'Facultative','Medium','Shelf','Summer–autumn','Bright yellow-orange shelves.'),
+P('Inonotus hispidus','szczeciniak szorstki','shaggy bracket','white',['Sapwood / limbs'],['Ash','Plane','Walnut'],'Parasite','High','Shelf','Summer–autumn','Shaggy rusty-orange. Associated with limb failure.'),
+P('Armillaria spp.','opieńka','honey fungus','white',['Root & butt'],['Many species'],'Parasite','High','Cluster','Autumn','Honey-coloured mushrooms, black bootlace rhizomorphs.'),
+P('Heterobasidion annosum','huba korzeniowa','root rot','white',['Root & butt'],['Pine','Spruce'],'Parasite','High','Shelf','Perennial','Key conifer root pathogen, spreads via root contacts.'),
+P('Fistulina hepatica','ozorek dębowy','beefsteak fungus','brown',['Heartwood'],['Oak'],'Parasite','Low','Shelf','Autumn','Looks like raw meat, red juice. Slow decay, often tolerated.'),
+P('Piptoporus betulinus','pniarek brzozowy','birch polypore','brown',['Heartwood','Dead wood'],['Birch'],'Facultative','Medium','Shelf','Perennial','Birch only; host is usually already declining.'),
+P('Pleurotus ostreatus','boczniak ostrygowy','oyster mushroom','white',['Sapwood / limbs','Dead wood'],['Beech','Poplar','Willow'],'Facultative','Low','Cluster','Autumn–winter','Oyster-shaped clusters. Weak parasite or saprotroph.'),
+P('Trametes versicolor','wrośniak różnobarwny','turkey tail','white',['Dead wood'],['Many species'],'Saprotroph','Low','Shelf','Year-round','Thin colourful brackets; sign of dead wood, not a threat.')
+];
+let S=[],F={},Q='',cur=null;
+S=SEED;
+const norm=p=>{p.exam=p.exam||'Unsure';if(p.season)p.season=String(p.season).split(' / ')[0];p.imgs=p.imgs||(p.img?[p.img]:[]);delete p.img;p.links=Array.isArray(p.links)?p.links:[]};
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+async function persist(){const j=JSON.stringify(S);try{if(window.storage){await window.storage.set(KEY,j);return}}catch(e){}try{localStorage.setItem(KEY,j)}catch(e){alert('Could not save: storage is full. Remove some photos or export a backup.')}}
+const vals=(p,k)=>{const v=p[k];return Array.isArray(v)?v:(v?[v]:[])};
+function opts(g){const set=new Set(g.fixed||[]);if(!g.fixed)S.forEach(p=>vals(p,g.k).forEach(v=>set.add(v)));return [...set].sort((a,b)=>g.fixed?0:a.localeCompare(b))}
+function match(p,skip){
+  if(Q){const h=[p.lat,p.pl,p.en,p.notes,vals(p,'hosts').map(bi).join(' '),vals(p,'part').map(bi).join(' ')].join(' ').toLowerCase();if(!h.includes(Q))return false}
+  return GROUPS.every(g=>{if(g.k===skip)return true;const s=F[g.k];return !s||!s.size||vals(p,g.k).some(v=>s.has(v))});
+}
+function renderFilters(){
+  $('filters').innerHTML=GROUPS.map(g=>`<div class="grp"><h3>${g.t}</h3><div class="chips">${opts(g).map(o=>{
+    const n=S.filter(p=>match(p,g.k)&&vals(p,g.k).includes(o)).length,on=F[g.k]&&F[g.k].has(o);
+    return `<button class="chip" aria-pressed="${!!on}" data-g="${g.k}" data-v="${esc(o)}">${esc(bi(o,g))}<small>${n}</small></button>`}).join('')}</div></div>`).join('');
+}
+function renderGrid(){
+  const L=S.filter(p=>match(p)).sort((a,b)=>a.lat.localeCompare(b.lat));
+  $('n').textContent=L.length+' of '+S.length+' fungi';
+  $('sub').textContent=S.length+' fungi · saved automatically';
+  $('clr').hidden=!(Q||Object.values(F).some(s=>s.size));
+  $('grid').innerHTML=L.length?L.map(p=>`<button class="card" style="--c:${RC[p.rot]||'var(--line)'}" data-id="${p.id}">
+    <div class="ph">🍄${p.imgs.length?`<img src="${esc(p.imgs[0])}" alt="" onerror="this.remove()">`:''}${p.imgs.length>1?`<span class="more">${p.imgs.length} photos</span>`:''}</div><div class="cb"><div class="lat">${esc(p.lat)}</div><div class="pl">${esc(p.pl)}${p.en?' / '+esc(p.en):''}</div>
+    <div class="tags">${p.rot?`<span class="tag rot ${p.rot}" style="--c:${RC[p.rot]}">${ROT[p.rot]}</span>`:''}${p.exam&&p.exam!=='Unsure'?`<span class="tag ex-${p.exam}">📝 ${EX[p.exam]}</span>`:''}${p.risk?`<span class="tag ${p.risk.toLowerCase()}">Risk: ${esc(bi(p.risk))}</span>`:''}${p.life?`<span class="tag">${esc(bi(p.life))}</span>`:''}</div>
+    <div class="hosts"><b>Hosts:</b> ${esc((p.hosts||[]).map(h=>bi(h)).join(', ')||'—')}</div>
+    <div class="pl">${esc((p.part||[]).map(h=>bi(h)).join(', '))}${p.form?' · '+esc(bi(p.form)):''}</div></div></button>`).join(''):
+    '<div class="empty">No fungi match these filters. Clear a filter or add a new fungus.</div>';
+}
+const render=()=>{renderFilters();renderGrid()};
+$('filters').onclick=e=>{const b=e.target.closest('.chip');if(!b)return;const{g,v}=b.dataset;(F[g]=F[g]||new Set());F[g].has(v)?F[g].delete(v):F[g].add(v);render()};
+$('q').oninput=e=>{Q=e.target.value.trim().toLowerCase();render()};
+$('clr').onclick=()=>{F={};Q='';$('q').value='';render()};
+$('grid').onclick=e=>{const c=e.target.closest('.card');if(c)openEdit(S.find(p=>p.id===c.dataset.id))};
+
+/* editor */
+function pills(g,sel){return `<div class="chips" data-pg="${g.k}">${opts(g).map(o=>`<button type="button" class="chip" aria-pressed="${sel.includes(o)}" data-v="${esc(o)}">${esc(bi(o,g))}</button>`).join('')}</div>`}
+function openEdit(p){
+  cur=p?{...p,imgs:[...p.imgs],links:[...p.links]}:{id:'s'+Date.now().toString(36),lat:'',pl:'',en:'',rot:'',part:[],hosts:[],life:'',risk:'',form:'',season:'',notes:'',imgs:[],links:[],exam:'Unsure'};cur.imgs=[...cur.imgs];
+  $('dt').textContent=p?'Edit fungus':'Add fungus';$('del').hidden=!p;
+  const g=k=>GROUPS.find(x=>x.k===k);
+  $('form').innerHTML=`
+  <div class="f"><label for="f_lat">Latin name</label><input type="text" id="f_lat" value="${esc(cur.lat)}"></div>
+  <div class="two"><div class="f"><label for="f_pl">Polish name</label><input type="text" id="f_pl" value="${esc(cur.pl)}"></div>
+  <div class="f"><label for="f_en">English name</label><input type="text" id="f_en" value="${esc(cur.en)}"></div></div>
+  <div class="f"><span>${g('exam').t}</span>${pills(g('exam'),[cur.exam])}</div>
+  <div class="f"><span>${g('rot').t}</span>${pills(g('rot'),[cur.rot])}</div>
+  <div class="f"><span>${g('part').t}</span>${pills(g('part'),cur.part)}</div>
+  <div class="f"><label for="f_hosts">${g('hosts').t} <span class="hint">comma-separated, e.g. Beech, Oak</span></label><input type="text" id="f_hosts" value="${esc((cur.hosts||[]).join(', '))}"></div>
+  <div class="f"><span>${g('life').t}</span>${pills(g('life'),[cur.life])}</div>
+  <div class="f"><span>${g('risk').t}</span>${pills(g('risk'),[cur.risk])}</div>
+  <div class="f"><span>${g('form').t}</span>${pills(g('form'),[cur.form])}</div>
+  <div class="f"><label for="f_season">Season seen</label><input type="text" id="f_season" value="${esc(cur.season)}"></div>
+  <div class="f"><label for="f_notes">Notes</label><textarea id="f_notes">${esc(cur.notes)}</textarea></div>
+  <div class="f"><label for="f_url">Photo URL <span class="hint">up to 4 photos in total</span></label><div style="display:flex;gap:8px"><input type="text" id="f_url" placeholder="https://…"><button type="button" class="btn" id="addurl">Add</button></div>
+  <label for="f_img" style="margin-top:10px">…or upload from your device</label><input type="file" id="f_img" accept="image/*" multiple><div class="gal" id="gal"></div></div>`;
+  drawGal();$('dlg').showModal();
+}
+$('form').onclick=e=>{
+  const b=e.target.closest('.chip');
+  if(b){const k=b.parentElement.dataset.pg,g=GROUPS.find(x=>x.k===k),v=b.dataset.v;
+    if(g.multi){const a=cur[k];a.includes(v)?a.splice(a.indexOf(v),1):a.push(v)}else cur[k]=cur[k]===v?'':v;
+    b.parentElement.querySelectorAll('.chip').forEach(c=>c.setAttribute('aria-pressed',g.multi?cur[k].includes(c.dataset.v):cur[k]===c.dataset.v))}
+  
+};
+function drawGal(){$('gal').innerHTML=cur.imgs.map((m,i)=>`<div><img src="${esc(m)}" alt="" onerror="this.style.opacity=.3"><button type="button" data-rm="${i}" aria-label="Remove photo">✕</button></div>`).join('');$('f_img').disabled=$('addurl').disabled=$('f_url').disabled=cur.imgs.length>=4}
+$('form').addEventListener('click',e=>{const b=e.target.closest('[data-rm]');if(b){cur.imgs.splice(+b.dataset.rm,1);drawGal()}});
+$('form').addEventListener('click',e=>{if(e.target.id==='addurl'){const u=$('f_url').value.trim();if(/^https?:\/\//i.test(u)&&cur.imgs.length<4){cur.imgs.push(u);$('f_url').value='';drawGal()}else $('f_url').focus()}});
+$('form').onchange=e=>{
+  if(e.target.id!=='f_img')return;
+  [...e.target.files].slice(0,4-cur.imgs.length).forEach(f=>{const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{if(cur.imgs.length>=4)return;const s=Math.min(1,520/im.width),c=document.createElement('canvas');c.width=im.width*s;c.height=im.height*s;c.getContext('2d').drawImage(im,0,0,c.width,c.height);cur.imgs.push(c.toDataURL('image/jpeg',.7));drawGal()};im.src=r.result};r.readAsDataURL(f)});
+  e.target.value='';
+};
+$('save').onclick=()=>{
+  const v=id=>$(id).value.trim();
+  if(!v('f_lat')){$('f_lat').focus();return}
+  Object.assign(cur,{lat:v('f_lat'),pl:v('f_pl'),en:v('f_en'),season:v('f_season'),notes:v('f_notes'),
+    hosts:v('f_hosts').split(',').map(s=>s.trim()).filter(Boolean).map(s=>s[0].toUpperCase()+s.slice(1))});
+  cur.exam=cur.exam||'Unsure';const i=S.findIndex(p=>p.id===cur.id);i>=0?S[i]=cur:S.push(cur);persist();$('dlg').close();render();
+};
+$('del').onclick=()=>{if(confirm('Delete '+cur.lat+'?')){S=S.filter(p=>p.id!==cur.id);persist();$('dlg').close();render()}};
+$('cancel').onclick=$('x').onclick=()=>$('dlg').close();
+$('add').onclick=()=>openEdit();
+
+/* backup */
+function dl(name,text,type){const a=document.createElement('a');a.href='data:'+type+';charset=utf-8,'+encodeURIComponent(text);a.download=name;a.click()}
+$('exp').onclick=()=>dl('fungi-atlas-backup.json',JSON.stringify(S,null,1),'application/json');
+$('csv').onclick=()=>{const h=['lat','pl','en','rot','part','hosts','life','risk','form','season','notes'];
+  const q=s=>'"'+String(s).replace(/"/g,'""')+'"';
+  dl('fungi-atlas.csv',[h.join(',')].concat(S.map(p=>h.map(k=>q(Array.isArray(p[k])?p[k].join('; '):p[k]||'')).join(','))).join('\n'),'text/csv')};
+$('imp').onclick=()=>$('file').click();
+$('file').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();
+  r.onload=()=>{try{const d=JSON.parse(r.result);if(!Array.isArray(d))throw 0;S=d;persist();render()}catch(_){alert('Could not read this file. Import a JSON backup exported from this atlas.')}};r.readAsText(f);e.target.value=''};
+(async()=>{let raw=null;try{if(window.storage){const x=await window.storage.get(KEY);raw=x&&x.value}}catch(e){}if(raw==null)try{raw=localStorage.getItem(KEY)}catch(e){}if(raw){try{S=JSON.parse(raw)}catch(e){}}S.forEach(norm);render()})();
+</script>
+</body>
+</html>
